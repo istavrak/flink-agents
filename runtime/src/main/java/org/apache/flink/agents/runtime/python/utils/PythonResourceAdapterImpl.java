@@ -73,6 +73,10 @@ public class PythonResourceAdapterImpl implements PythonResourceAdapter {
     static final String FROM_JAVA_VECTOR_STORE_QUERY =
             PYTHON_MODULE_PREFIX + "from_java_vector_store_query";
 
+    static final String FROM_JAVA_MCP = PYTHON_MODULE_PREFIX + "from_java_mcp";
+
+    static final String UPDATE_JAVA_MCP = PYTHON_MODULE_PREFIX + "update_java_mcp";
+
     private final BiFunction<String, ResourceType, Resource> getResource;
     private final PythonInterpreter interpreter;
     private final JavaResourceAdapter javaResourceAdapter;

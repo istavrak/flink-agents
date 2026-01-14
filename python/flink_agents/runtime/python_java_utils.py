@@ -31,6 +31,11 @@ from flink_agents.api.vector_stores.vector_store import (
     VectorStoreQuery,
     VectorStoreQueryMode,
 )
+from flink_agents.integrations.mcp import (
+    MCPTool,
+    MCPPrompt,
+    MCPServer,
+)
 from flink_agents.plan.resource_provider import JAVA_RESOURCE_MAPPING
 from flink_agents.runtime.java.java_resource_wrapper import (
     JavaGetResourceWrapper,
@@ -216,6 +221,36 @@ def from_java_vector_store_query(j_query: Any) -> VectorStoreQuery:
         limit=j_query.getLimit(),
         collection_name=j_query.getCollection(),
         extra_args=j_query.getExtraArgs()
+    )
+
+def from_java_mcp_server(j_mcp_server: Any) -> MCPServer:
+    """Convert a Java MCP server to a Python MCP server."""
+    return MCPServer(
+        base_url=j_mcp_server.getBaseUrl(),
+        api_key=j_mcp_server.getApiKey()
+    )
+
+def from_java_mcp_tool(j_mcp_tool: Any) -> MCPTool:
+    """Convert a Java MCP tool to a Python MCP tool."""
+    name = j_mcp_tool.getName()
+    metadata = ToolMetadata(
+        name=name,
+        description=j_mcp_tool.getDescription(),
+        args_schema=create_model_from_java_tool_schema_str(name, j_mcp_tool.getMetadata().getInputSchema()),
+    )
+    return MCPTool(
+        metadata=metadata,
+        mcp_prompt=MCPPrompt(
+            prompt_id=j_mcp_tool.getMcpPrompt().getPromptId(),
+            mcp_server=from_java_mcp_server(j_mcp_tool.getMcpPrompt().getMcpServer())
+        )
+    )
+
+def from_java_mcp_prompt(j_mcp_prompt: Any) -> MCPPrompt:
+    """Convert a Java MCP prompt to a Python MCP prompt."""
+    return MCPPrompt(
+        prompt_id=j_mcp_prompt.getPromptId(),
+        mcp_server=from_java_mcp_server(j_mcp_prompt.getMcpServer())
     )
 
 def call_method(obj: Any, method_name: str, kwargs: Dict[str, Any]) -> Any:
