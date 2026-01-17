@@ -28,8 +28,7 @@ import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTranspor
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.flink.agents.api.chat.messages.ChatMessage;
 import org.apache.flink.agents.api.chat.messages.MessageRole;
-import org.apache.flink.agents.api.resource.ResourceType;
-import org.apache.flink.agents.api.resource.SerializableResource;
+import org.apache.flink.agents.api.mcp.BaseMCPServer;
 import org.apache.flink.agents.api.tools.ToolMetadata;
 import org.apache.flink.agents.integrations.mcp.auth.ApiKeyAuth;
 import org.apache.flink.agents.integrations.mcp.auth.Auth;
@@ -73,21 +72,12 @@ import java.util.Objects;
  *
  * <p>Reference: <a href="https://modelcontextprotocol.io/sdk/java/mcp-client">MCP Java Client</a>
  */
-public class MCPServer extends SerializableResource {
+public class MCPServer extends BaseMCPServer {
 
     private static final String FIELD_ENDPOINT = "endpoint";
     private static final String FIELD_HEADERS = "headers";
     private static final String FIELD_TIMEOUT_SECONDS = "timeoutSeconds";
     private static final String FIELD_AUTH = "auth";
-
-    @JsonProperty(FIELD_ENDPOINT)
-    private final String endpoint;
-
-    @JsonProperty(FIELD_HEADERS)
-    private final Map<String, String> headers;
-
-    @JsonProperty(FIELD_TIMEOUT_SECONDS)
-    private final long timeoutSeconds;
 
     @JsonProperty(FIELD_AUTH)
     private final Auth auth;
@@ -146,32 +136,15 @@ public class MCPServer extends SerializableResource {
             @JsonProperty(FIELD_HEADERS) Map<String, String> headers,
             @JsonProperty(FIELD_TIMEOUT_SECONDS) long timeoutSeconds,
             @JsonProperty(FIELD_AUTH) Auth auth) {
-        this.endpoint = Objects.requireNonNull(endpoint, "endpoint cannot be null");
-        this.headers = headers != null ? new HashMap<>(headers) : new HashMap<>();
-        this.timeoutSeconds = timeoutSeconds;
+        super(
+                Objects.requireNonNull(endpoint, "endpoint cannot be null"),
+                headers,
+                timeoutSeconds);
         this.auth = auth;
     }
 
     public static Builder builder(String endpoint) {
         return new Builder().endpoint(endpoint);
-    }
-
-    @Override
-    @JsonIgnore
-    public ResourceType getResourceType() {
-        return ResourceType.MCP_SERVER;
-    }
-
-    public String getEndpoint() {
-        return endpoint;
-    }
-
-    public Map<String, String> getHeaders() {
-        return new HashMap<>(headers);
-    }
-
-    public long getTimeoutSeconds() {
-        return timeoutSeconds;
     }
 
     public Auth getAuth() {
@@ -402,22 +375,26 @@ public class MCPServer extends SerializableResource {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
         MCPServer that = (MCPServer) o;
-        return timeoutSeconds == that.timeoutSeconds
-                && Objects.equals(endpoint, that.endpoint)
-                && Objects.equals(headers, that.headers)
-                && Objects.equals(auth, that.auth);
+        return Objects.equals(auth, that.auth);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(endpoint, headers, timeoutSeconds, auth);
+        return Objects.hash(super.hashCode(), auth);
     }
 
     @Override
     public String toString() {
-        return String.format("MCPServer{endpoint='%s'}", endpoint);
+        return super.toString();
     }
 }

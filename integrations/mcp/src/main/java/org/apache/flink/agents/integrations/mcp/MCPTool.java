@@ -21,7 +21,8 @@ package org.apache.flink.agents.integrations.mcp;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.flink.agents.api.tools.Tool;
+import org.apache.flink.agents.api.mcp.BaseMCPServer;
+import org.apache.flink.agents.api.mcp.BaseMCPTool;
 import org.apache.flink.agents.api.tools.ToolMetadata;
 import org.apache.flink.agents.api.tools.ToolParameters;
 import org.apache.flink.agents.api.tools.ToolResponse;
@@ -35,10 +36,10 @@ import java.util.Objects;
 /**
  * MCP tool definition that can be called directly.
  *
- * <p>This represents a single tool from an MCP server. It extends the base Tool class and delegates
- * actual execution to the MCP server.
+ * <p>This represents a single tool from an MCP server. It extends the base MCPTool class and
+ * delegates actual execution to the MCP server.
  */
-public class MCPTool extends Tool {
+public class MCPTool extends BaseMCPTool {
 
     private static final String FIELD_MCP_SERVER = "mcpServer";
 
@@ -59,12 +60,6 @@ public class MCPTool extends Tool {
         this.mcpServer = Objects.requireNonNull(mcpServer, "mcpServer cannot be null");
     }
 
-    @Override
-    @JsonIgnore
-    public ToolType getToolType() {
-        return ToolType.MCP;
-    }
-
     /**
      * Call the MCP tool with the given parameters.
      *
@@ -76,10 +71,7 @@ public class MCPTool extends Tool {
         long startTime = System.currentTimeMillis();
 
         try {
-            Map<String, Object> arguments = new HashMap<>();
-            for (String paramName : parameters.getParameterNames()) {
-                arguments.put(paramName, parameters.getParameter(paramName));
-            }
+            Map<String, Object> arguments = prepareArguments(parameters);
 
             List<Object> result = mcpServer.callTool(metadata.getName(), arguments);
 
@@ -101,29 +93,10 @@ public class MCPTool extends Tool {
      *
      * @return The MCP server
      */
+    @Override
     @JsonIgnore
     public MCPServer getMcpServer() {
         return mcpServer;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MCPTool mcpTool = (MCPTool) o;
-        return Objects.equals(metadata, mcpTool.metadata)
-                && Objects.equals(mcpServer, mcpTool.mcpServer);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(metadata, mcpServer);
-    }
-
-    @Override
-    public String toString() {
-        return String.format(
-                "MCPTool{name='%s', server='%s'}", metadata.getName(), mcpServer.getEndpoint());
     }
 
     @Override

@@ -31,7 +31,9 @@ public enum ResourceType {
     VECTOR_STORE("vector_store"),
     PROMPT("prompt"),
     TOOL("tool"),
-    MCP_SERVER("mcp_server");
+    MCP_SERVER("mcp_server"),
+    MCP_TOOL("mcp_tool"),
+    MCP_PROMPT("mcp_prompt");
 
     private final String value;
 

@@ -28,7 +28,7 @@ import org.apache.flink.agents.api.tools.ToolType;
 import java.util.Map;
 
 /**
- * PythonTool is a subclass of Tool that that provides a method to parse a Python tool metadata from
+ * PythonTool is a subclass of Tool that provides a method to parse a Python tool metadata from
  * a serialized map.
  */
 public class PythonTool extends Tool {

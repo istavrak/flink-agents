@@ -237,38 +237,6 @@ def from_java_vector_store_query(j_query: Any) -> VectorStoreQuery:
         extra_args=j_query.getExtraArgs()
     )
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-def from_java_mcp_server(j_mcp_server: Any) -> MCPServer:
-    """Convert a Java MCP server to a Python MCP server."""
-    return MCPServer(
-        base_url=j_mcp_server.getBaseUrl(),
-        api_key=j_mcp_server.getApiKey()
-    )
-
-def from_java_mcp_tool(j_mcp_tool: Any) -> MCPTool:
-    """Convert a Java MCP tool to a Python MCP tool."""
-    name = j_mcp_tool.getName()
-    metadata = ToolMetadata(
-        name=name,
-        description=j_mcp_tool.getDescription(),
-        args_schema=create_model_from_java_tool_schema_str(name, j_mcp_tool.getMetadata().getInputSchema()),
-    )
-    return MCPTool(
-        metadata=metadata,
-        mcp_prompt=MCPPrompt(
-            prompt_id=j_mcp_tool.getMcpPrompt().getPromptId(),
-            mcp_server=from_java_mcp_server(j_mcp_tool.getMcpPrompt().getMcpServer())
-        )
-    )
-
-def from_java_mcp_prompt(j_mcp_prompt: Any) -> MCPPrompt:
-    """Convert a Java MCP prompt to a Python MCP prompt."""
-    return MCPPrompt(
-        prompt_id=j_mcp_prompt.getPromptId(),
-        mcp_server=from_java_mcp_server(j_mcp_prompt.getMcpServer())
-    )
-
 def from_java_vector_store_query_result(j_query: Any) -> VectorStoreQueryResult:
     """Convert a Java vector store query result to a Python query result."""
     return VectorStoreQueryResult(
@@ -285,36 +253,6 @@ def from_java_collection(j_collection: Any) -> Collection:
 def get_mode_value(query: VectorStoreQuery) -> str:
     """Get the mode value of a VectorStoreQuery."""
     return query.mode.value
-
-def from_java_mcp_server(j_mcp_server: Any) -> MCPServer:
-    """Convert a Java MCP server to a Python MCP server."""
-    return MCPServer(
-        base_url=j_mcp_server.getBaseUrl(),
-        api_key=j_mcp_server.getApiKey()
-    )
-
-def from_java_mcp_tool(j_mcp_tool: Any) -> MCPTool:
-    """Convert a Java MCP tool to a Python MCP tool."""
-    name = j_mcp_tool.getName()
-    metadata = ToolMetadata(
-        name=name,
-        description=j_mcp_tool.getDescription(),
-        args_schema=create_model_from_java_tool_schema_str(name, j_mcp_tool.getMetadata().getInputSchema()),
-    )
-    return MCPTool(
-        metadata=metadata,
-        mcp_prompt=MCPPrompt(
-            prompt_id=j_mcp_tool.getMcpPrompt().getPromptId(),
-            mcp_server=from_java_mcp_server(j_mcp_tool.getMcpPrompt().getMcpServer())
-        )
-    )
-
-def from_java_mcp_prompt(j_mcp_prompt: Any) -> MCPPrompt:
-    """Convert a Java MCP prompt to a Python MCP prompt."""
-    return MCPPrompt(
-        prompt_id=j_mcp_prompt.getPromptId(),
-        mcp_server=from_java_mcp_server(j_mcp_prompt.getMcpServer())
-    )
 
 def call_method(obj: Any, method_name: str, kwargs: Dict[str, Any]) -> Any:
     """Calls a method on `obj` by name and passes in positional and keyword arguments.
